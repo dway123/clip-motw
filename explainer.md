@@ -6,19 +6,19 @@
 
 ## Introduction
 
-Introduce a Mark of the Web for the Web Clipboard. This would be a format written in parallel with other already-written formats, which can inform native applications that the format originated from the web, as well as which source url the data came from.
+The web clipboard is does not currently indicate that its data originates from the web. This means that, unlike with downloaded files, native applications are unable to use such information to optionally provide defense in depth or other protections based on this information.
 
-This feature exists in native applications today, and allows native applications to optionally implement additional safeguards or defense in depth. Clipboard could benefit from a similar feature, so that native applications may have more knowledge of the origin of their data.
+This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoTW would be a format written in parallel with other already-written formats, which can inform native applications that the format originated from the web, as well as which source url the data came from.
 
 ## Goals
 
 - Provide an additional method for defense in depth, as the Downloads Mark of the Web does.
-- Avoid exacerbating privacy/security implications already present in the clipboard.
+- Preserve user privacy/security.
 
 ## Non-goals
 
-Like with Downloads, not all native applications must check this MoTW, especially at first.
-Discuss raw clipboard access design. While the author of this explainer may also be considering raw clipboard access, this MoTW would be applied on all web clipboard data. It’s not advantageous to have a hypothetical, separate “sanitized clipboard MoTW” and “unsanitized clipboard MoTW”.
+- Require all native applications to check this MoTW (Like with Downloads, not all native applications must check this MoTW, especially at first).
+- Discuss raw clipboard access design. (While the author of this explainer may also be considering raw clipboard access, this MoTW would be applied on all web clipboard data. It’s not advantageous to have a hypothetical, separate “sanitized clipboard MoTW” and “unsanitized clipboard MoTW”.)
 
 ## Mark of the Web
 
@@ -62,11 +62,13 @@ Native applications in some platforms can already passively view screen content 
 
 As with providing a source url, providing a referrer url is also a privacy concern, as this could inform a malicious listening native application of multiple sites in a user’s browsing history with each user copy. As the value of providing a referrer url seems fairly small, this explainer has opted to exclude a referrer url.
 
-## Omit all url data?
+### Omit all url data?
 
 A Mark of the Web doesn’t strictly need to include origin sites. Instead, an alternative design could simply name the *type* of origin. A potential format name could be `'text/origin'`, and potential values could be `'incognito'`, `'web'`, and `’installed-web-application’`. 
 
 While this would still potentially degrade privacy, by easily providing information to native applications regarding the type of source for clipboard data, the security benefits should outweigh the privacy concerns. That said, the risk of providing a source url seemed fairly small, so this was not the chosen path.
+
+Note that given the current design of raw clipboard access, this could allow for leakage of an origin of clipboard data, which may result in leakage of this data to web applications, given this information.
 
 ## Stakeholder Feedback / Opposition
 
