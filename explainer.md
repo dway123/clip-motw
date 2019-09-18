@@ -91,5 +91,5 @@ Many thanks for the valuable feedback and advice from:
 - engedy@chromium.org
 - pwnall@chromium.org
 - slightlyoff@chromium.org
-- Chromium’s Windows and MacOS implementations.
+- Chromium’s [Windows](https://cs.chromium.org/chromium/src/components/services/quarantine/quarantine_win.cc) and [MacOS](https://cs.chromium.org/chromium/src/components/services/quarantine/quarantine_mac.mm) implementations.
 
