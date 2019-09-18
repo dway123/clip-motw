@@ -1,4 +1,4 @@
-# Mark of the Web Explainer
+# Clipboard Mark of the Web Explainer
 
 ## Author:
 
@@ -8,7 +8,7 @@
 
 The web clipboard does not currently indicate that its data originates from the web. This means that, unlike with downloaded files, native applications are unable to use such information to optionally provide defense in depth or other protections based on this information.
 
-This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoTW would be a format written in parallel with other already-written formats, which can inform native applications that the format originated from the web.
+This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoTW would be a format written in parallel with other already-written formats, which can inform native applications that the clipboard payload originated from the web.
 
 ## Goals
 
@@ -92,4 +92,6 @@ Many thanks for the valuable feedback and advice from:
 - pwnall@chromium.org
 - slightlyoff@chromium.org
 - Chromium’s [Windows](https://cs.chromium.org/chromium/src/components/services/quarantine/quarantine_win.cc) and [MacOS](https://cs.chromium.org/chromium/src/components/services/quarantine/quarantine_mac.mm) implementations.
+- Windows's [URL Security Zones](https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms537183(v=vs.85)) and a [document](http://woshub.com/how-windows-determines-that-the-file-has-been-downloaded-from-the-internet/) describing it.
+- MacOS's [File Quarantine](https://developer.apple.com/library/archive/releasenotes/Carbon/RN-LaunchServices/index.html#//apple_ref/doc/uid/TP40001369-CH1-DontLinkElementID_2) and a [document](https://apple.stackexchange.com/questions/104712/what-causes-os-x-to-mark-a-folder-as-quarantined) describing it.
 
