@@ -6,9 +6,9 @@
 
 ## Introduction
 
-The web clipboard is does not currently indicate that its data originates from the web. This means that, unlike with downloaded files, native applications are unable to use such information to optionally provide defense in depth or other protections based on this information.
+The web clipboard does not currently indicate that its data originates from the web. This means that, unlike with downloaded files, native applications are unable to use such information to optionally provide defense in depth or other protections based on this information.
 
-This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoTW would be a format written in parallel with other already-written formats, which can inform native applications that the format originated from the web, as well as which source url the data came from.
+This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoTW would be a format written in parallel with other already-written formats, which can inform native applications that the format originated from the web.
 
 ## Goals
 
@@ -22,7 +22,7 @@ This explainer proposes a Mark of the Web (MoTW) for the Web Clipboard. This MoT
 
 ## Mark of the Web
 
-Mark of the Web would add an additional format, written on every write from a user agent. This should not be visible on read for existing web clipboard APIs, but would be visible to native application clipboards, and could be accessible via the proposed raw clipboard access API.
+Mark of the Web would add an additional format, written on every write from a user agent. This should not be visible on read for existing web clipboard APIs, but would be visible to native application clipboards, and could be accessible via the proposed raw clipboard access API. The data contained would simply be `'web'`, to indicate that the origin was a web site. In the future, this may be extended to also allow for `'installed-web-application'`, `'native-application'`, etc.
 
 ```js
 // NOTE: This is a hypothetical representation in JS, 
@@ -42,33 +42,41 @@ await navigator.clipboard.writeText(‘hello world’);
 // {
 //   ‘text/plain’: ‘hello world’,
 //   // Only present on a clipboard write from a user agent.
-//   // Equal to ‘about:internet’ when in incognito or if the
-//   // url is too long.
-//   ‘text/web-source-url: ‘example.com’ 
+//   ‘text/source-type: ‘web’ 
 // }
 ```
 
+This would potentially degrade privacy, by easily providing information to native applications regarding the type of source for clipboard data. However, native applications on many platforms are already able to view screen content or listen to keyboard actions, so this information is already displayed in some sense, and no new information should be exposed.
+
+In conjunction with raw clipboard access, this may also expose new information by making it clear to web applications with access to the raw clipboard that content originated from the web.
+
 ## Considered alternatives
 
-### Exclude source url?
+### Provide source url?
 
-Providing a source url could allow antivirus scanners to detect websites that attempt to place malicious content on the clipboard, and has parity with the shape of Downloads, where both source url and referrer url are provided.
+Providing a source url, or the url of the source of the clipboard data, could allow antivirus scanners to detect websites that attempt to place malicious content on the clipboard, and has parity with the shape of Downloads MoTW, where both source url and referrer url are provided.
 
-However, providing a source url is a privacy concern, as this is new information that was not previously exposed to the clipboard. In most platforms, any native application would be able to continuously read/poll the clipboard in the background, so this is introducing new information to native applications, which could be used by a malicious application to fingerprint a user (see which sites a user has visited and copied from). However, the improvement in security, by allowing native applications to better identify untrusted data, could be worth the privacy concern. 
+However, providing a source url is a privacy concern, as this is new information that was not previously exposed to the clipboard. In most platforms, any native application would be able to continuously read/poll the clipboard in the background, so this is introducing new information to native applications, which could be used by a malicious application to fingerprint a user (see which sites a user has visited and copied from). That said, native applications in some platforms can already passively view screen content (ex. remote desktop applications), so this may not be a significant privacy concern (it simplifies this form of fingerprinting, but does not add new data).
 
-Native applications in some platforms can already passively view screen content (ex. remote desktop applications), so this may not be a significant privacy concern.
+Another privacy concern of this alternative is that, in conjunction with raw clipboard access, providing a source-url would result in more exposed data, as websites would have access to the origin of clipboard data, which would not be possible without MoTW.
+
+```
+// With Mark of the Web
+await navigator.clipboard.writeText(‘hello world’);
+// clipboard contents after write:
+// {
+//   ‘text/plain’: ‘hello world’,
+//   // Only present on a clipboard write from a user agent.
+//   // Equal to ‘about:internet’ when in incognito or if the
+//   // url is too long. Note that this url is new information
+//   // not previously exposed to the native clipboard.
+//   ‘text/web-source-url: ‘https://www.example.com’ 
+// }
+```
 
 ### Provide referrer url?
 
-As with providing a source url, providing a referrer url is also a privacy concern, as this could inform a malicious listening native application of multiple sites in a user’s browsing history with each user copy. As the value of providing a referrer url seems fairly small, this explainer has opted to exclude a referrer url.
-
-### Omit all url data?
-
-A Mark of the Web doesn’t strictly need to include origin sites. Instead, an alternative design could simply name the *type* of origin. A potential format name could be `'text/origin'`, and potential values could be `'incognito'`, `'web'`, and `’installed-web-application’`. 
-
-While this would still potentially degrade privacy, by easily providing information to native applications regarding the type of source for clipboard data, the security benefits should outweigh the privacy concerns. That said, the risk of providing a source url seemed fairly small, so this was not the chosen path.
-
-Note that given the current design of raw clipboard access, this could allow for leakage of an origin of clipboard data, which may result in leakage of this data to web applications, given this information.
+Some implementations of MoTW also provide a referrer url, or the url of the page that "referred" the user to the current page. However, as with providing a source url, providing a referrer url is also a privacy concern, as this could inform a malicious listening native application of multiple sites in a user’s browsing history with each user copy. As the value of providing a referrer url seems fairly small, this explainer has opted to exclude a referrer url.
 
 ## Stakeholder Feedback / Opposition
 
