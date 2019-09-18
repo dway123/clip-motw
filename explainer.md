@@ -46,19 +46,21 @@ await navigator.clipboard.writeText(‘hello world’);
 // }
 ```
 
-This would potentially degrade privacy, by easily providing information to native applications regarding the type of source for clipboard data. However, native applications on many platforms are already able to view screen content or listen to keyboard actions, so this information is already displayed in some sense, and no new information should be exposed.
+This would potentially degrade privacy, by easily providing information to native applications regarding the type of source for clipboard data. However, native applications on many platforms are already able to view screen content and listen to keyboard actions, so this information is already displayed in some sense, and no new information should be exposed to native applications.
 
-In conjunction with raw clipboard access, this may also expose new information by making it clear to web applications with access to the raw clipboard that content originated from the web.
+In conjunction with raw clipboard access, this may also expose new information. Web applications with raw clipboard access may learn new information through MoTW, in that some clipboard payload originated from the web. This should be a relatively small concern, as the data exposed is relatively safe compared to other data exposed by raw clipboard access, which a user must have explicitly given consent for (as well as secure context and active frame).
 
 ## Considered alternatives
 
 ### Provide source url?
 
-Providing a source url, or the url of the source of the clipboard data, could allow antivirus scanners to detect websites that attempt to place malicious content on the clipboard, and has parity with the shape of Downloads MoTW, where both source url and referrer url are provided.
+Providing a source url, or the url of the source of the clipboard data, could allow antivirus scanners or other native applications to detect websites that attempt to place malicious content on the clipboard, and has parity with the shape of Downloads MoTW, where both source url and referrer url are provided.
 
-However, providing a source url is a privacy concern, as this is new information that was not previously exposed to the clipboard. In most platforms, any native application would be able to continuously read/poll the clipboard in the background, so this is introducing new information to native applications, which could be used by a malicious application to fingerprint a user (see which sites a user has visited and copied from). That said, native applications in some platforms can already passively view screen content (ex. remote desktop applications), so this may not be a significant privacy concern (it simplifies this form of fingerprinting, but does not add new data).
+However, providing a source url is a privacy concern, as this is new information that was not previously exposed to the clipboard. In most platforms, any native application would be able to continuously read/poll the clipboard in the background, so this is introducing new information to native applications, which could be used by a malicious application to fingerprint a user (see which sites a user has visited and copied from). That said, native applications in some platforms can already passively view screen content (ex. remote desktop applications), so this may not be a significant privacy concern in most platforms (it simplifies this form of fingerprinting, but does not add new data).
 
-Another privacy concern of this alternative is that, in conjunction with raw clipboard access, providing a source-url would result in more exposed data, as websites would have access to the origin of clipboard data, which would not be possible without MoTW.
+A stronger privacy concern of this alternative is that, in conjunction with raw clipboard access, providing a source-url would result in more exposed data, as websites would have access to the origin of clipboard data, which would not be possible without this MoTW with source url.
+
+An important distinction between the Clipboard MoTW and Downloads MoTW is that the Clipboard MoTW is provided on a raw clipboard data stream, which is accessible by all native applications (as well as raw clipboard access). Meanwhile, the Downloads MoTW is only stored in file metadata, and is therefore not accessible to web applications through Native Filesystem or similar APIs. Therefore, it's important to avoid providing the source url to the clipboard.
 
 ```
 // With Mark of the Web
@@ -76,7 +78,7 @@ await navigator.clipboard.writeText(‘hello world’);
 
 ### Provide referrer url?
 
-Some implementations of MoTW also provide a referrer url, or the url of the page that "referred" the user to the current page. However, as with providing a source url, providing a referrer url is also a privacy concern, as this could inform a malicious listening native application of multiple sites in a user’s browsing history with each user copy. As the value of providing a referrer url seems fairly small, this explainer has opted to exclude a referrer url.
+Some implementations of MoTW also provide a referrer url, or the url of the page that "referred" the user to the current page. However, as with providing a source url, providing a referrer url is also a privacy concern, as this could inform a malicious listening native application of multiple sites in a user’s browsing history with each user copy. As the value of providing a referrer url seems fairly small, and is overshadowed by the risk, this explainer has opted to exclude a referrer url.
 
 ## Stakeholder Feedback / Opposition
 
