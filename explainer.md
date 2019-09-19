@@ -30,19 +30,19 @@ Mark of the Web would add an additional format, written on every write from a us
 // web application developer may not see any change.
 
 // Without Mark of the Web
-await navigator.clipboard.writeText(‘hello world’);
+await navigator.clipboard.writeText('hello world');
 // clipboard contents after write:
 // {
-//   ‘text/plain’: ‘hello world’
+//   'text/plain': 'hello world'
 // }
 
 // With Mark of the Web
-await navigator.clipboard.writeText(‘hello world’);
+await navigator.clipboard.writeText('hello world');
 // clipboard contents after write:
 // {
-//   ‘text/plain’: ‘hello world’,
+//   'text/plain': 'hello world',
 //   // Only present on a clipboard write from a user agent.
-//   ‘text/source-type: ‘web’ 
+//   'text/source-type': 'web'
 // }
 ```
 
@@ -64,15 +64,15 @@ An important distinction between the Clipboard MoTW and Downloads MoTW is that t
 
 ```
 // With Mark of the Web
-await navigator.clipboard.writeText(‘hello world’);
+await navigator.clipboard.writeText('hello world');
 // clipboard contents after write:
 // {
-//   ‘text/plain’: ‘hello world’,
+//   'text/plain': 'hello world',
 //   // Only present on a clipboard write from a user agent.
 //   // Equal to ‘about:internet’ when in incognito or if the
 //   // url is too long. Note that this url is new information
 //   // not previously exposed to the native clipboard.
-//   ‘text/web-source-url: ‘https://www.example.com’ 
+//   'text/web-source-url': 'https://www.example.com'
 // }
 ```
 
